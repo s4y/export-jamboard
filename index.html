@@ -16,11 +16,40 @@
 
       <p>To install it, just drag this link to your bookmarks toolbar:</p>
 
+      <script id=source type="text/x-bookmarklet">
+(() => {
+function copyText(text) {
+  var node = document.createElement('textarea')
+  var selection = document.getSelection()
+
+  node.textContent = text
+  document.body.appendChild(node)
+
+  selection.removeAllRanges()
+  node.select()
+  document.execCommand('copy')
+
+  selection.removeAllRanges()
+  document.body.removeChild(node)
+}
+copyText(
+  Array.from(document.querySelectorAll('.jam-frame-content'))
+  .map(el => Array.from(el.querySelectorAll('.jam-postit-element, .jam-element'))
+    .filter(el => el.dataset.value)
+    .map(el => (el.classList.contains('jam-postit-element') ? '' : '# ') + el.dataset.value).join('\n'))
+  .filter(x => x).join('\n---\n'));
+})()
+      </script>
       <p>
-        <a role="button" href="javascript:(function()%7Bfunction%20copyText(text)%20%7B%0A%20%20var%20node%20%3D%20document.createElement('textarea')%0A%20%20var%20selection%20%3D%20document.getSelection()%0A%0A%20%20node.textContent%20%3D%20text%0A%20%20document.body.appendChild(node)%0A%0A%20%20selection.removeAllRanges()%0A%20%20node.select()%0A%20%20document.execCommand('copy')%0A%0A%20%20selection.removeAllRanges()%0A%20%20document.body.removeChild(node)%0A%7D%0Aconst%20values%20%3D%20Array.from(document.querySelectorAll('%23jam-content%20.jam-postit-element')).map(el%20%3D%3E%20el.dataset.value)%0AcopyText(values.join(%22%5Cn%22))%7D)()%3B">Export Jamboard</a>
+        <a id=bookmarklet role="button">Export Jamboard</a>
       </p>
+      <script>
+        bookmarklet.href = `javascript:${encodeURIComponent(source.textContent.trim())}`;
+      </script>
         
       <p>Then open the Jamboard you want to export and click it. The contents will be copied to your clipboard, so you can paste them into a document.</p>
+
+      <p>Based on <a href="https://timwis.com/export-jamboard/">Export Jamboard</a> by <a href="https://timwis.com">Tim Wisniewski</a>.</p>
     </main>
   </body>
 </html>
